@@ -1,0 +1,28 @@
+=== Evidencia de Ejecución de Scripts y Pruebas Negativas ===
+HemoMed Banco de Sangre - PostgreSQL
+
+=== Ejecución 01_ddl.sql ===
+CREATE TABLE
+CREATE INDEX
+SUCCESS.
+
+=== Ejecución 02_triggers.sql ===
+CREATE FUNCTION
+CREATE TRIGGER
+SUCCESS.
+
+=== Prueba 11.1: Intervalo menor a 56 días ===
+INSERT INTO DONACION (volumen_ml, documento, codigo_profesional) VALUES (450, '1010123456', 'P003');
+ERROR: No han transcurrido los 56 días obligatorios desde la última donación (Última: 2026-01-10 08:30:00).
+CONTEXT: función PL/pgSQL fn_validar_donacion() en la línea 15
+
+=== Prueba 11.2: Despacho de unidad vencida ===
+UPDATE UNIDAD SET id_estado = 3 WHERE numero_unidad = 7;
+ERROR: La unidad 7 venció el 2026-03-25 y no se puede despachar.
+CONTEXT: función PL/pgSQL fn_validar_despacho_unidad() en la línea 10
+
+=== Consulta de Verificación v_control_despachadas ===
+SELECT * FROM v_control_despachadas;
+numero_solicitud | id_tipo | cantidad_despachada | real_despachadas
+------------------+---------+---------------------+------------------
+(0 filas)
